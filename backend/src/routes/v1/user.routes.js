@@ -1,10 +1,11 @@
 import { Router } from "express";
-import {user} from "../../fakeDB/fakeUser.js"
+import {users} from "../../fakeDB/fakeUser.js";
+
 
 export const router = Router();
 
 //Read Users
-app.get("/users", (req,res,next) => {
+router.get("/users", (req,res,next) => {
     try{
         //console.log(req); //console.log(req.body);
         res.json(users);
@@ -14,7 +15,7 @@ app.get("/users", (req,res,next) => {
 });
 
 //Create User
-app.post("/users", (req,res,next) => {
+router.post("/users", (req,res,next) => {
     try{
         const { username, email, password } = req.body;
 
@@ -41,13 +42,13 @@ app.post("/users", (req,res,next) => {
     return res.status(201).json(newUser);
 
     }catch(error){
-     next(err); 
+     next(error); 
     }
 
 })
 
 //Update User
-app.put("/users/:id", (req,res,next) => {
+router.put("/users/:id", (req,res,next) => {
     try{
     const user = users.find((u) => u.id === req.params.id)
     if(!user){
@@ -55,7 +56,7 @@ app.put("/users/:id", (req,res,next) => {
     }
     const { username, email, password } =req.body;
     if(!username || !email || !password){
-        return res.status(400).json({error: "Username, email and password are required1"});
+        return res.status(400).json({error: "Username, email and password are required!"});
     }
     user.username = username;
     user.email = email;
@@ -63,22 +64,22 @@ app.put("/users/:id", (req,res,next) => {
 
     return res.status(200).json(user);
     }catch(error){
-     next(err); 
+     next(error); 
     }
 });
 
 //Delete User
-app.delete("/users/:id", (req,res,next) => {
+router.delete("/users/:id", (req,res,next) => {
     try{
-     const index = users.findIndex((u)=>u.id === req.params.id)
+     const {id} = req.params;
+     const index = users.findIndex((u)=>u.id === id);
 
      if(index === -1){
         return res.status(404).json({error: "User not found!"})
      }
-     const [deleted] = users.splice(indexedDB,1)
+     const [deleted] = users.splice(index,1)
      return res.json(deleted)
     }catch(error){
-     next(err);   
+     next(error);   
     }
-    const {id} = req.params;
 });
